@@ -33,8 +33,8 @@ for index, row in df.iterrows():
     train_data.append((row['message'].splitlines()[16:]))
 # tok_to_ix = load_vocab(train_data)
 
-updated_data = train_data
-train_data[:] = [' '.join(x).split('.') for x in train_data] # i'll fix all this later lol too tired rn
+# updated_data = train_data
+train_data[:] = [' '.join(x).split('. ') for x in train_data] # i'll fix all this later lol too tired rn
 train_data[:] = [[elem for elem in x if elem.strip()] for x in train_data]
 train_data[:] = [[elem.strip() for elem in x] for x in train_data]
 
@@ -47,13 +47,20 @@ rand_word = random.choice(train_data[0].split())
 # print(rand_word)
 # print(train_data[0].replace(rand_word, '???', 1))
 
-tuples_list = []
-for sentence in train_data:
+# tuples_list = []
+
+f = open("new.txt", "w")
+for sentence in train_data[:10]:
   rand_word = random.choice(sentence.split())
   masked_sent = re.sub(r"\b%s\b" % re.escape(rand_word), '[MASK]', sentence, count=1)
-  tuples_list.append((rand_word, masked_sent))
+  f.write(rand_word + ' | ' + masked_sent + '\n')
+  # tuples_list.append((rand_word, masked_sent))
 
-print(*tuples_list[0:10], sep = "\n") 
+# f = open("new.txt", "w")
+# for sents in tuples_list[0:10]:
+#   f.write(str(sents) + '\n')
+
+# print(*tuples_list, sep = "\n") 
 
 # tok_to_ix = load_vocab(tuples_list)
 

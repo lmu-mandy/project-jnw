@@ -1,0 +1,10 @@
+forecast | Here is our [MASK]
+out | Traveling to have a business meeting takes the fun [MASK] of the trip
+Especially | [MASK] if you have to prepare a presentation
+without | I would suggest holding the business plan meetings here then take a trip [MASK] any formal business meetings
+opinions | I would even try and get some honest [MASK] on whether a trip is even desired or necessary
+about | As far as the business meetings, I think it would be more productive to try and stimulate discussions across the different groups [MASK] what is working and what is not
+waiting | Too often the presenter speaks and the others are quiet just [MASK] for their turn
+in | The meetings might be better if held [MASK] a round table discussion format
+go | My suggestion for where to [MASK] is Austin
+ski | Play golf and rent a [MASK] boat and jet ski's
