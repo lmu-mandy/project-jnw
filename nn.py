@@ -1,0 +1,72 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import pandas as pd
+import numpy as np
+import re
+
+
+class Net(nn.Module):
+    def __init__(self, num_words, emb_dim, num_y):
+        super().__init__()
+        self.emb = nn.Embedding(num_words, emb_dim)
+        self.linear = nn.Linear(emb_dim, num_y)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, text):
+        embeds = torch.mean(self.emb(text), dim=0)
+        return self.sigmoid(self.linear(embeds))
+
+
+def load_vocab(text):
+    word_to_ix = {}
+    for sent, _mask in text:
+        for word in sent.split():
+            word_to_ix.setdefault(word, len(word_to_ix))
+    return word_to_ix
+
+# Data
+
+# df = pd.read_csv("data/labeled_data.csv")
+# train_data = [(preprocess(row['tweet']), row['class'])
+#               for i, row in df.iterrows() if i != 0]
+
+# tok_to_ix = load_vocab(train_data)
+
+df = pd.read_csv("data/train.csv")
+train_data = [(row['text'], row['mask'])
+              for i, row in df.iterrows() if i != 0]
+
+tok_to_ix = load_vocab(train_data)
+
+masks = ["forcast", "trip", "presentation"]
+# Model
+
+emb_dim = 8
+num_classes = len(masks)
+learning_rate = 0.01
+model = Net(len(tok_to_ix), emb_dim, num_classes)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+loss_fn = nn.BCELoss()
+
+# Training
+
+n_epochs = 1
+for epoch in range(n_epochs):
+  model.train()
+  for text, mask in train_data:
+    print("text", text)
+    print("mask", mask)
+    x = [tok_to_ix[tok] for tok in text.split()]
+    x_train_tensor = torch.LongTensor(x)
+    y_train_tensor = np.zeros(3) # forcast[0], trip[1], presentation[2]
+    y_train_tensor[masks.index(mask)] = 1
+    pred_y = model(x_train_tensor)
+    # loss = loss_fn(pred_y, y_train_tensor)k
+  #   loss.backward()
+  #   optimizer.step()
+  #   optimizer.zero_grad()
+  # print("\nEpoch:", epoch)
+  # print("Training loss:", loss.item())
+
+# Test
