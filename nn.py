@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
+import itertools
+import random
+import re
 
 
 class Net(nn.Module):
@@ -31,44 +34,54 @@ for index, row in df.iterrows():
 # tok_to_ix = load_vocab(train_data)
 
 updated_data = train_data
-train_data[:] = [' '.join(x).split('.') for x in train_data]
+train_data[:] = [' '.join(x).split('.') for x in train_data] # i'll fix all this later lol too tired rn
 train_data[:] = [[elem for elem in x if elem.strip()] for x in train_data]
 train_data[:] = [[elem.strip() for elem in x] for x in train_data]
 
-# for str_lists in train_data:
-#   str_lists = [elem for elem in str_lists if elem.strip()]
-#   print(str_lists)
-  # if '' in str_lists:
-  #   str_lists.remove("")
-  # if ' ' in str_lists:
-  #   str_lists.remove(" ")
+train_data = list(itertools.chain.from_iterable(train_data))
 
-print(train_data)
+rand_word = random.choice(train_data[0].split())
 
-# emb_dim = 5
-# num_classes = 3
-# learning_rate = 0.01
-# model = Net(len(tok_to_ix), emb_dim, num_classes)
-# optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-# loss_fn = nn.BCELoss()
+start_index = train_data[0].find(rand_word)
+end_index = start_index + len(rand_word)
+# print(rand_word)
+# print(train_data[0].replace(rand_word, '???', 1))
 
-# n_epochs = 5
-# for epoch in range(n_epochs):
-#     model.train()
-#     for text, label in train_data:
-#         x = [tok_to_ix[tok] for tok in text.split()]
-#         x_train_tensor = torch.LongTensor(x)
-#         if label == 2:
-#             y_train_tensor = torch.Tensor([0, 0, 1])
-#         elif label == 1:
-#             y_train_tensor = torch.Tensor([0, 1, 0])
-#         else:
-#             y_train_tensor = torch.Tensor([1, 0, 0])
-#         # y_train_tensor = torch.Tensor([label])
-#         pred_y = model(x_train_tensor)
-#         loss = loss_fn(pred_y, y_train_tensor)
-#         loss.backward()
-#         optimizer.step()
-#         optimizer.zero_grad()
-#     print("\nEpoch:", epoch)
-#     print("Training loss:", loss.item())
+tuples_list = []
+
+for sentence in train_data:
+  rand_word = random.choice(sentence.split())
+  masked_sent = re.sub(re.escape(rand_word), '???', sentence, count=1)
+  tuples_list.append((rand_word, masked_sent))
+
+# print(tuples_list[0:10])
+
+tok_to_ix = load_vocab(tuples_list)
+
+emb_dim = 5
+num_classes = 3
+learning_rate = 0.01
+model = Net(len(tok_to_ix), emb_dim, num_classes)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+loss_fn = nn.BCELoss()
+
+n_epochs = 5
+for epoch in range(n_epochs):
+    model.train()
+    for label, text in tuples_list:
+        x = [tok_to_ix[tok] for tok in text.split()]
+        x_train_tensor = torch.LongTensor(x)
+        # if label == 2:
+        #     y_train_tensor = torch.Tensor([0, 0, 1])
+        # elif label == 1:
+        #     y_train_tensor = torch.Tensor([0, 1, 0])
+        # else:
+        #     y_train_tensor = torch.Tensor([1, 0, 0])
+        y_train_tensor = torch.Tensor([label])
+        pred_y = model(x_train_tensor)
+        loss = loss_fn(pred_y, y_train_tensor)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+    print("\nEpoch:", epoch)
+    print("Training loss:", loss.item())
