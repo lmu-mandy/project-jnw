@@ -59,15 +59,16 @@ for epoch in range(n_epochs):
     print("mask", mask)
     x = [tok_to_ix[tok] for tok in text.split()]
     x_train_tensor = torch.LongTensor(x)
-    y_train_tensor = np.zeros(3) # forcast[0], trip[1], presentation[2]
+    y_train_tensor = np.zeros(3)
     y_train_tensor[masks.index(mask)] = 1
+    y_train_tensor = torch.Tensor(y_train_tensor)
     pred_y = model(x_train_tensor)
-    # loss = loss_fn(pred_y, y_train_tensor)k
-  #   loss.backward()
-  #   optimizer.step()
-  #   optimizer.zero_grad()
-  # print("\nEpoch:", epoch)
-  # print("Training loss:", loss.item())
+    loss = loss_fn(pred_y, y_train_tensor)
+    loss.backward()
+    optimizer.step()
+    optimizer.zero_grad()
+  print("\nEpoch:", epoch)
+  print("Training loss:", loss.item())
 
 # Test
 
