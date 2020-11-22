@@ -39,6 +39,7 @@ train_data = [(row['text'], row['mask'])
 
 tok_to_ix = load_vocab(train_data)
 
+# TODO: Add all mask words
 masks = ["forcast", "trip", "presentation"]
 # Model
 
