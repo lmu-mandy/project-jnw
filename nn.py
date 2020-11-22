@@ -70,3 +70,11 @@ for epoch in range(n_epochs):
   # print("Training loss:", loss.item())
 
 # Test
+
+y_test = "I'm happy because of my"
+with torch.no_grad():
+  model.eval()
+  x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
+  x_test = torch.LongTensor(x)
+  pred_y_test = model(x_test)
+  print(pred_y_test)
