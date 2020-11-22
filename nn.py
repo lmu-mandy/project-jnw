@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 import re
 
-
 class Net(nn.Module):
     def __init__(self, num_words, emb_dim, num_y):
         super().__init__()
@@ -27,12 +26,6 @@ def load_vocab(text):
 
 # Data
 
-# df = pd.read_csv("data/labeled_data.csv")
-# train_data = [(preprocess(row['tweet']), row['class'])
-#               for i, row in df.iterrows() if i != 0]
-
-# tok_to_ix = load_vocab(train_data)
-
 df = pd.read_csv("data/train.csv")
 train_data = [(row['text'], row['mask'])
               for i, row in df.iterrows() if i != 0]
@@ -41,6 +34,7 @@ tok_to_ix = load_vocab(train_data)
 
 # TODO: Add all mask words
 masks = ["forcast", "trip", "presentation"]
+
 # Model
 
 emb_dim = 8
