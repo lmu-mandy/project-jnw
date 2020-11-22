@@ -49,7 +49,7 @@ rand_word = random.choice(train_data[0].split())
 
 # tuples_list = []
 
-f = open("new.txt", "w")
+f = open("train.txt", "w")
 for sentence in train_data[:10]:
   rand_word = random.choice(sentence.split())
   masked_sent = re.sub(r"\b%s\b" % re.escape(rand_word), '[MASK]', sentence, count=1)
