@@ -48,13 +48,12 @@ rand_word = random.choice(train_data[0].split())
 # print(train_data[0].replace(rand_word, '???', 1))
 
 tuples_list = []
-
 for sentence in train_data:
   rand_word = random.choice(sentence.split())
-  masked_sent = re.sub(re.escape(rand_word), '???', sentence, count=1)
+  masked_sent = re.sub(r"\b%s\b" % re.escape(rand_word), '[MASK]', sentence, count=1)
   tuples_list.append((rand_word, masked_sent))
 
-print(tuples_list[0:5])
+print(*tuples_list[0:10], sep = "\n") 
 
 # tok_to_ix = load_vocab(tuples_list)
 
