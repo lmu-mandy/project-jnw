@@ -17,11 +17,14 @@ train_data = list(itertools.chain.from_iterable(train_data))
 
 f = open("train.csv", "w")
 f.write('mask,'+'text'+'\n')
-for sentence in train_data[:3]:
+for sentence in train_data[:10000]:
   split_sent = sentence.split(' ')
   output = [' '.join(split_sent[:2])]
   for word in split_sent[2:]:
     output.append(output[-1] +  ' ' + word)
   for o in output:
     s = o.split(' ')
-    f.write(s[-1] + ',' + ' '.join(s[:len(s) - 1]) + '\n')
+    last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
+    new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
+    if last_word != '' and not last_word.isdigit() and new_sent != '':
+      f.write(last_word + ',' + new_sent + '\n')
