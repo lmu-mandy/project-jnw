@@ -33,3 +33,5 @@ for sentence in train_data[:10000]:
     new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
     if last_word != '' and not last_word.isdigit() and new_sent != '':
       f.write(last_word + ',`' + new_sent + '`\n')
+
+# test.csv -> 10300:1600
