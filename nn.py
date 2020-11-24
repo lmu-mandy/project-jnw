@@ -26,14 +26,14 @@ def load_vocab(text):
 
 # Data
 
-df = pd.read_csv("data/train.csv")
+df = pd.read_csv("data/train.csv", quotechar='`')
 train_data = [(row['text'], row['mask'])
               for i, row in df.iterrows() if i != 0]
 
 tok_to_ix = load_vocab(train_data)
 
 # TODO: Add all mask words
-masks = ["forcast", "trip", "presentation"]
+masks = ["forecast", "trip", "presentation"]
 
 # Model
 
