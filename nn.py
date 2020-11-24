@@ -27,13 +27,16 @@ def load_vocab(text):
 # Data
 
 df = pd.read_csv("data/train.csv", quotechar='`')
-train_data = [(row['text'], row['mask'])
-              for i, row in df.iterrows() if i != 0]
-
+#   TODO: Store masks more efficiently
+train_data = []
+masks = []
+for i, row in df.iterrows():
+    if i != 0:
+        text, mask = row['text'], row['mask']
+        train_data.append((text,mask))
+        if mask not in masks:
+            masks.append(mask)
 tok_to_ix = load_vocab(train_data)
-
-# TODO: Add all mask words
-masks = ["forecast", "trip", "presentation"]
 
 # Model
 
