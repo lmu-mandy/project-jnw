@@ -49,15 +49,13 @@ loss_fn = nn.BCELoss()
 
 # Training
 
-n_epochs = 1
+n_epochs = 10
 for epoch in range(n_epochs):
   model.train()
   for text, mask in train_data:
-    print("text", text)
-    print("mask", mask)
     x = [tok_to_ix[tok] for tok in text.split()]
     x_train_tensor = torch.LongTensor(x)
-    y_train_tensor = np.zeros(3)
+    y_train_tensor = np.zeros(len(masks))
     y_train_tensor[masks.index(mask)] = 1
     y_train_tensor = torch.Tensor(y_train_tensor)
     pred_y = model(x_train_tensor)
