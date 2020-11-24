@@ -15,6 +15,11 @@ train_data[:] = [[elem.strip() for elem in x] for x in train_data]
 
 train_data = list(itertools.chain.from_iterable(train_data))
 
+for sents in train_data:
+  if '---' in sents:
+    # print(sents)
+    train_data.remove(sents)
+
 f = open("train.csv", "w")
 f.write('mask,'+'text'+'\n')
 for sentence in train_data[:10000]:
