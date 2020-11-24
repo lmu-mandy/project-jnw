@@ -5,7 +5,7 @@ import re
 import string
 
 train_data = []
-df = pd.read_csv("emails.csv", nrows=500)
+df = pd.read_csv("emails.csv", nrows=10000, usecols=range(2))
 for index, row in df.iterrows():
     train_data.append((row['message'].splitlines()[16:]))
 
