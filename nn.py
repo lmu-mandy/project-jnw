@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import re
 
+
 class Net(nn.Module):
     def __init__(self, num_words, emb_dim, num_y):
         super().__init__()
@@ -16,6 +17,8 @@ class Net(nn.Module):
         embeds = torch.mean(self.emb(text), dim=0)
         return self.sigmoid(self.linear(embeds))
 
+# TODO: take a look at preprocessing again
+
 
 def load_vocab(text):
     word_to_ix = {}
@@ -26,6 +29,7 @@ def load_vocab(text):
 
 # Data
 
+
 df = pd.read_csv("data/train.csv", quotechar='`')
 #   TODO: Store masks more efficiently
 train_data = []
@@ -33,7 +37,7 @@ masks = []
 for i, row in df.iterrows():
     if i != 0:
         text, mask = row['text'], row['mask']
-        train_data.append((text,mask))
+        train_data.append((text, mask))
         if mask not in masks:
             masks.append(mask)
 tok_to_ix = load_vocab(train_data)
@@ -51,20 +55,20 @@ loss_fn = nn.BCELoss()
 
 n_epochs = 10
 for epoch in range(n_epochs):
-  model.train()
-  for text, mask in train_data:
-    x = [tok_to_ix[tok] for tok in text.split()]
-    x_train_tensor = torch.LongTensor(x)
-    y_train_tensor = np.zeros(len(masks))
-    y_train_tensor[masks.index(mask)] = 1
-    y_train_tensor = torch.Tensor(y_train_tensor)
-    pred_y = model(x_train_tensor)
-    loss = loss_fn(pred_y, y_train_tensor)
-    loss.backward()
-    optimizer.step()
-    optimizer.zero_grad()
-  print("\nEpoch:", epoch)
-  print("Training loss:", loss.item())
+    model.train()
+    for text, mask in train_data:
+        x = [tok_to_ix[tok] for tok in text.split()]
+        x_train_tensor = torch.LongTensor(x)
+        y_train_tensor = np.zeros(len(masks))
+        y_train_tensor[masks.index(mask)] = 1
+        y_train_tensor = torch.Tensor(y_train_tensor)
+        pred_y = model(x_train_tensor)
+        loss = loss_fn(pred_y, y_train_tensor)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+    print("\nEpoch:", epoch)
+    print("Training loss:", loss.item())
 
 # Manual Test
 
@@ -92,10 +96,9 @@ with torch.no_grad():
         pred_y_test = model(x_test)
         pred_mask_index = torch.argmax(pred_y_test)
         pred_word = masks[pred_mask_index]
-        if pred_word.lower() == mask.lower():
+        if pred_word.lower() == mask.lower():  # TODO: make this less strict
             print('OK', pred_word, mask)
         # print(pred_word, mask)
         # for i, word_index in enumerate(word_indices):
         #     pred_word = masks[word_index]
         #     print(values[i].item(), y_test, f"_{pred_word}_")
-
