@@ -4,3 +4,4 @@ numpy
 pytorch_transformers
 halo
 rich
+transformers
