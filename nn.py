@@ -53,7 +53,7 @@ loss_fn = nn.BCELoss()
 
 # Training
 
-n_epochs = 10
+n_epochs = 2
 for epoch in range(n_epochs):
     model.train()
     for text, mask in train_data:
@@ -72,33 +72,35 @@ for epoch in range(n_epochs):
 
 # Manual Test
 
-# y_test = "I have the presentation to"
+y_test = "I have the presentation to"
 
 # with torch.no_grad():
-#   model.eval()
-#   x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
-#   x_test = torch.LongTensor(x)
-#   pred_y_test = model(x_test)
-#   values, word_indices = pred_y_test.topk(3)
-#   for i, word_index in enumerate(word_indices):
-#       pred_word = masks[word_index]
-#       print(values[i].item(), y_test, f"_{pred_word}_")
+#     model.eval()
+#     x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
+#     x_test = torch.LongTensor(x)
+#     pred_y_test = model(x_test)
+#     values, word_indices = pred_y_test.topk(3)
+#     for i, word_index in enumerate(word_indices):
+#         pred_word = masks[word_index]
+#         print(values[i].item(), y_test, f"_{pred_word}_")
 
 
 # Test Report
 
-with torch.no_grad():
-    for text, mask in train_data:
-        y_test = mask
-        model.eval()
-        x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
-        x_test = torch.LongTensor(x)
-        pred_y_test = model(x_test)
-        pred_mask_index = torch.argmax(pred_y_test)
-        pred_word = masks[pred_mask_index]
-        if pred_word.lower() == mask.lower():  # TODO: make this less strict
-            print('OK', pred_word, mask)
-        # print(pred_word, mask)
-        # for i, word_index in enumerate(word_indices):
-        #     pred_word = masks[word_index]
-        #     print(values[i].item(), y_test, f"_{pred_word}_")
+# with torch.no_grad():
+#     for text, mask in train_data:
+#         y_test = mask
+#         model.eval()
+#         x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
+#         x_test = torch.LongTensor(x)
+#         pred_y_test = model(x_test)
+#         pred_mask_index = torch.argmax(pred_y_test)
+#         pred_word = masks[pred_mask_index]
+#         if pred_word.lower() == mask.lower():  # TODO: make this less strict
+#             print('OK', pred_word, mask)
+#         else:
+#             print("NO", pred_word, mask)
+# print(pred_word, mask)
+# for i, word_index in enumerate(word_indices):
+#     pred_word = masks[word_index]
+#     print(values[i].item(), y_test, f"_{pred_word}_")
