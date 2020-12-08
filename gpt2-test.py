@@ -6,7 +6,7 @@ tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
 # sentences = [('Traveling to have a business', 'meeting')]
 
-df = pd.read_csv("data/train.csv", quotechar='`')
+df = pd.read_csv("data/test.csv", quotechar='`')
 sentences = []
 for i, row in df.iterrows():
     if i != 0:
