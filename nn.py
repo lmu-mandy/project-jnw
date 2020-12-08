@@ -72,17 +72,17 @@ loss_fn = nn.BCELoss()
 
 # Manual Test
 
-y_test = "I have the presentation to"
+# y_test = "I have the presentation to"
 
-with torch.no_grad():
-    model.eval()
-    x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
-    x_test = torch.LongTensor(x)
-    pred_y_test = model(x_test)
-    values, word_indices = pred_y_test.topk(3)
-    for i, word_index in enumerate(word_indices):
-        pred_word = masks[word_index]
-        print(values[i].item(), y_test, f"_{pred_word}_")
+# with torch.no_grad():
+#     model.eval()
+#     x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
+#     x_test = torch.LongTensor(x)
+#     pred_y_test = model(x_test)
+#     values, word_indices = pred_y_test.topk(3)
+#     for i, word_index in enumerate(word_indices):
+#         pred_word = masks[word_index]
+#         print(values[i].item(), y_test, f"_{pred_word}_")
 
 
 # Test Report
@@ -95,20 +95,13 @@ with torch.no_grad():
         x_test = torch.LongTensor(x)
         pred_y_test = model(x_test)
         res, ind = torch.topk(pred_y_test, 5)
-        # print("Index:", ind[0])
         pred_words = []
         for i in ind:
             pred_words.append(masks[i])
-        # print("PRED", pred_words)
         if mask in pred_words:
             print("Yes:", pred_words, mask)
-        else:
-            print("No", pred_words, mask)
-        # pred_word = masks[pred_mask_index]
-        # if pred_word.lower() == mask.lower():  # TODO: make this less strict top k
-        #     print('OK', pred_word, mask)
         # else:
-        #     print("NO", pred_word, mask)
+        #     print("No", pred_words, mask)
 # print(pred_word, mask)
 # for i, word_index in enumerate(word_indices):
 #     pred_word = masks[word_index]
