@@ -13,11 +13,13 @@ for i, row in df.iterrows():
         text, mask = row['text'], row['mask']
         sentences.append((text, mask))
 
-total = 0
-valid = 0
+
 model = GPT2LMHeadModel.from_pretrained('gpt2')
 model.eval()
-avg = 0
+avg_rank = 0
+total = 0
+valid = 0
+avg_len = 0
 for sent in sentences:
     text = sent[0]
     indexed_tokens = tokenizer.encode(text)
@@ -34,6 +36,7 @@ for sent in sentences:
     total += 1
     if next_word_rank >= 0:
         valid += 1
-        avg = (avg * (valid-1) + next_word_rank)/valid
+        avg_rank = (avg_rank * (valid-1) + next_word_rank)/valid
+        avg_len = (avg_len * (valid-1) + len(text.split()))/valid
     print(f"total:{total}", f"accuracy:{format(valid/total, '.4f')}",
-          f"avg_rank:{format(avg, '.4f')}", f"rank:{next_word_rank}")
+          f"avg_rank:{format(avg_rank, '.4f')}", f"avg_len:{format(avg_len, '.4f')}", f"rank:{next_word_rank}")
