@@ -9,21 +9,29 @@ df = pd.read_csv("emails.csv", nrows=10000, usecols=range(2))
 for index, row in df.iterrows():
     train_data.append((row['message'].splitlines()[16:]))
 
-train_data[:] = [' '.join(x).split('. ') for x in train_data] # i'll fix all this later lol too tired rn
+train_data[:] = [' '.join(x).split('. ') for x in train_data]
 train_data[:] = [[elem for elem in x if elem.strip()] for x in train_data]
 train_data[:] = [[elem.strip() for elem in x] for x in train_data]
 
 train_data = list(itertools.chain.from_iterable(train_data))
+new_train = []
 
-for sents in train_data:
-  if '---' in sents or sents.startswith(string.punctuation) or sents.startswith('Received:'):
-    # print(sents)
-    train_data.remove(sents)
+for idx, value in enumerate(train_data):
+  x = train_data[idx]
+  if x.replace(' ','').isalpha() and len(x) >= 4:
+    new_train.append(x)
 
-f = open("data/train.csv", "w")
-f.write('mask,'+'text'+'\n')
-for sentence in train_data[:10000]:
-  split_sent = sentence.split(' ')
+train = open("data/train.csv", "w")
+train.write('mask,'+'text'+'\n')
+
+test = open("data/test.csv", "w")
+test.write('mask,'+'text'+'\n')
+
+val = open("data/val.csv", "w")
+val.write('mask,'+'text'+'\n')
+
+for idx, value in enumerate(new_train[:1050]):
+  split_sent = new_train[idx].split(' ')
   output = [' '.join(split_sent[:2])]
   for word in split_sent[2:]:
     output.append(output[-1] +  ' ' + word)
@@ -32,6 +40,9 @@ for sentence in train_data[:10000]:
     last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
     new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
     if last_word != '' and not last_word.isdigit() and new_sent != '':
-      f.write(last_word + ',`' + new_sent + '`\n')
-
-# test.csv -> 10300:1600
+      if idx <= 300:
+        train.write(last_word + ',`' + new_sent + '`\n')
+      elif idx <= 675:
+        test.write(last_word + ',`' + new_sent + '`\n')
+      else:
+        val.write(last_word + ',`' + new_sent + '`\n')
