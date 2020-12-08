@@ -53,7 +53,7 @@ loss_fn = nn.BCELoss()
 
 # Training
 
-# n_epochs = 2
+# n_epochs = 10
 # for epoch in range(n_epochs):
 #     model.train()
 #     for text, mask in train_data:
