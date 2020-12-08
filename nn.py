@@ -86,7 +86,7 @@ loss_fn = nn.BCELoss()
 
 
 # Test Report
-
+prediction_score = {"Yes": 0, "No": 1}
 model.eval()
 with torch.no_grad():
     for text, mask in train_data:
@@ -100,5 +100,12 @@ with torch.no_grad():
             pred_words.add(masks[i])
         if mask in pred_words:
             print("Yes:", pred_words, mask)
+            prediction_score["Yes"] += 1
         else:
             print("No", pred_words, mask)
+            prediction_score["No"] += 1
+    accuracy = prediction_score["Yes"] / \
+        (prediction_score["Yes"] + prediction_score["No"])
+    print("YES:", prediction_score["Yes"])
+    print("NO:", prediction_score["No"])
+    print("Accuracy:", accuracy)
