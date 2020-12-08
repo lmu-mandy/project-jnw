@@ -21,10 +21,17 @@ for idx, value in enumerate(train_data):
   if x.replace(' ','').isalpha() and len(x) >= 4:
     new_train.append(x)
 
-f = open("data/train.csv", "w")
-f.write('mask,'+'text'+'\n')
-for sentence in new_train[:300]:
-  split_sent = sentence.split(' ')
+train = open("data/train.csv", "w")
+train.write('mask,'+'text'+'\n')
+
+test = open("data/test.csv", "w")
+test.write('mask,'+'text'+'\n')
+
+val = open("data/val.csv", "w")
+val.write('mask,'+'text'+'\n')
+
+for idx, value in enumerate(new_train[:1050]):
+  split_sent = new_train[idx].split(' ')
   output = [' '.join(split_sent[:2])]
   for word in split_sent[2:]:
     output.append(output[-1] +  ' ' + word)
@@ -33,4 +40,9 @@ for sentence in new_train[:300]:
     last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
     new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
     if last_word != '' and not last_word.isdigit() and new_sent != '':
-      f.write(last_word + ',`' + new_sent + '`\n')
+      if idx <= 300:
+        train.write(last_word + ',`' + new_sent + '`\n')
+      elif idx <= 675:
+        test.write(last_word + ',`' + new_sent + '`\n')
+      else:
+        val.write(last_word + ',`' + new_sent + '`\n')
