@@ -15,23 +15,46 @@ train_data[:] = [[elem.strip() for elem in x] for x in train_data]
 
 train_data = list(itertools.chain.from_iterable(train_data))
 
-for sents in train_data:
-  if '---' in sents or sents.startswith(string.punctuation) or sents.startswith('Received:'):
-    # print(sents)
-    train_data.remove(sents)
+for idx, value in enumerate(train_data):
+  if train_data[idx].startswith('---'):
+    train_data.pop(idx)
+  if train_data[idx].startswith(string.punctuation):
+    train_data.pop(idx)
+  if train_data[idx].startswith('Received:'):
+    train_data.pop(idx)
+  if train_data[idx].startswith('From:'):
+    train_data.pop(idx)
+  if train_data[idx].startswith('Outlook Migration'):
+    train_data.pop(idx)
+  if '---' in train_data[idx]:
+    train_data.pop(idx)
+  # if '-----' in train_data[idx]:
+  #   print(idx)
+  #   train_data.pop(idx)
+    # break
 
-f = open("data/train.csv", "w")
-f.write('mask,'+'text'+'\n')
-for sentence in train_data[:10000]:
-  split_sent = sentence.split(' ')
-  output = [' '.join(split_sent[:2])]
-  for word in split_sent[2:]:
-    output.append(output[-1] +  ' ' + word)
-  for o in output:
-    s = o.split(' ')
-    last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
-    new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
-    if last_word != '' and not last_word.isdigit() and new_sent != '':
-      f.write(last_word + ',`' + new_sent + '`\n')
+for sents in train_data:
+  if '---' in sents:
+    print(sents)
+    break
+
+# f = open("data/train.csv", "w")
+# f.write('mask,'+'text'+'\n')
+# for sentence in train_data[:1000]:
+#   if '---' in sentence:
+#     print('Yoooo')
+#     print(sentence)
+#     break
+#   split_sent = sentence.split(' ')
+#   output = [' '.join(split_sent[:2])]
+#   print(split_sent)
+#   for word in split_sent[2:]:
+#     output.append(output[-1] +  ' ' + word)
+#   for o in output:
+#     s = o.split(' ')
+#     last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
+#     new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
+#     if last_word != '' and not last_word.isdigit() and new_sent != '':
+#       f.write(last_word + ',`' + new_sent + '`\n')
 
 # test.csv -> 10300:1600
