@@ -30,7 +30,7 @@ test.write('mask,'+'text'+'\n')
 val = open("data/val.csv", "w")
 val.write('mask,'+'text'+'\n')
 
-for idx, value in enumerate(new_train[:1050]):
+for idx, value in enumerate(new_train[:5000]):
   split_sent = new_train[idx].split(' ')
   output = [' '.join(split_sent[:2])]
   for word in split_sent[2:]:
@@ -40,9 +40,9 @@ for idx, value in enumerate(new_train[:1050]):
     last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
     new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
     if last_word != '' and not last_word.isdigit() and new_sent != '':
-      if idx <= 300:
+      if idx <= 1670:
         train.write(last_word + ',`' + new_sent + '`\n')
-      elif idx <= 675:
+      elif idx <= 3500:
         test.write(last_word + ',`' + new_sent + '`\n')
       else:
         val.write(last_word + ',`' + new_sent + '`\n')
