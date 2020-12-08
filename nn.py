@@ -95,14 +95,10 @@ with torch.no_grad():
         x_test = torch.LongTensor(x)
         pred_y_test = model(x_test)
         res, ind = torch.topk(pred_y_test, 5)
-        pred_words = []
+        pred_words = set()
         for i in ind:
-            pred_words.append(masks[i])
+            pred_words.add(masks[i])
         if mask in pred_words:
             print("Yes:", pred_words, mask)
-        # else:
-        #     print("No", pred_words, mask)
-# print(pred_word, mask)
-# for i, word_index in enumerate(word_indices):
-#     pred_word = masks[word_index]
-#     print(values[i].item(), y_test, f"_{pred_word}_")
+        else:
+            print("No", pred_words, mask)
