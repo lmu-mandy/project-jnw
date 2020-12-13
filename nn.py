@@ -59,22 +59,22 @@ loss_fn = nn.BCELoss()
 
 # Train model on training data
 
-n_epochs = 3
-for epoch in range(n_epochs):
-    model.train()
-    for text, mask in train_data:
-        x = [tok_to_ix[tok] for tok in text.split()]
-        x_train_tensor = torch.LongTensor(x)
-        y_train_tensor = np.zeros(len(masks))
-        y_train_tensor[masks.index(mask)] = 1
-        y_train_tensor = torch.Tensor(y_train_tensor)
-        pred_y = model(x_train_tensor)
-        loss = loss_fn(pred_y, y_train_tensor)
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-    print("\nEpoch:", epoch)
-    print("Training loss:", loss.item())
+# n_epochs = 3
+# for epoch in range(n_epochs):
+#     model.train()
+#     for text, mask in train_data:
+#         x = [tok_to_ix[tok] for tok in text.split()]
+#         x_train_tensor = torch.LongTensor(x)
+#         y_train_tensor = np.zeros(len(masks))
+#         y_train_tensor[masks.index(mask)] = 1
+#         y_train_tensor = torch.Tensor(y_train_tensor)
+#         pred_y = model(x_train_tensor)
+#         loss = loss_fn(pred_y, y_train_tensor)
+#         loss.backward()
+#         optimizer.step()
+#         optimizer.zero_grad()
+#     print("\nEpoch:", epoch)
+#     print("Training loss:", loss.item())
 
 # Manual Test
 
@@ -112,6 +112,6 @@ with torch.no_grad():
             prediction_score["No"] += 1
     accuracy = prediction_score["Yes"] / \
         (prediction_score["Yes"] + prediction_score["No"])
-    print("YES:", prediction_score["Yes"])
-    print("NO:", prediction_score["No"])
+    print("Correct Predictions (Topk | k=5):", prediction_score["Yes"])
+    print("Incorrect Predictions (Topk | k=5):", prediction_score["No"])
     print("Accuracy:", accuracy)
