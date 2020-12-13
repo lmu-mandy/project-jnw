@@ -35,31 +35,28 @@ def load_vocab(text):
     return word_to_ix
 
 
+# Function for loading training/testing data
+def load_data(data_file):
+    df = pd.read_csv(data_file, quotechar='`')
+    dat = []
+    masks = []
+    for i, row in df.iterrows():
+        if i != 0:
+            text, mask = row['text'], row['mask']
+            dat.append((text, mask))
+            if mask not in masks:
+                masks.append(mask)
+    return dat, masks
+
+
 # Load training data and split up built sentences and masks
 
-df = pd.read_csv("data/train.csv", quotechar='`')
-train_data = []
-masks = []
-for i, row in df.iterrows():
-    if i != 0:
-        text, mask = row['text'], row['mask']
-        train_data.append((text, mask))
-        if mask not in masks:
-            masks.append(mask)
+train_data, masks = load_data("data/train.csv")
 tok_to_ix = load_vocab(train_data)
 
 # Load testing data and split up built sentences and masks
 
-df_test = pd.read_csv("data/test.csv", quotechar='`')
-test_data = []
-test_masks = []
-for i, row in df_test.iterrows():
-    if i != 0:
-        text, mask = row['text'], row['mask']
-        test_data.append((text, mask))
-        if mask not in test_masks:
-            test_masks.append(mask)
-test_tok_to_ix = load_vocab(test_data)
+test_data, test_masks = load_data("data/test.csv")
 
 # Initialize Model
 
@@ -72,22 +69,22 @@ loss_fn = nn.BCELoss()
 
 # Train model on training data
 
-# n_epochs = 3
-# for epoch in range(n_epochs):
-#     model.train()
-#     for text, mask in train_data:
-#         x = [tok_to_ix[tok] for tok in text.split()]
-#         x_train_tensor = torch.LongTensor(x)
-#         y_train_tensor = np.zeros(len(masks))
-#         y_train_tensor[masks.index(mask)] = 1
-#         y_train_tensor = torch.Tensor(y_train_tensor)
-#         pred_y = model(x_train_tensor)
-#         loss = loss_fn(pred_y, y_train_tensor)
-#         loss.backward()
-#         optimizer.step()
-#         optimizer.zero_grad()
-#     print("\nEpoch:", epoch)
-#     print("Training loss:", loss.item())
+n_epochs = 3
+for epoch in range(n_epochs):
+    model.train()
+    for text, mask in train_data:
+        x = [tok_to_ix[tok] for tok in text.split()]
+        x_train_tensor = torch.LongTensor(x)
+        y_train_tensor = np.zeros(len(masks))
+        y_train_tensor[masks.index(mask)] = 1
+        y_train_tensor = torch.Tensor(y_train_tensor)
+        pred_y = model(x_train_tensor)
+        loss = loss_fn(pred_y, y_train_tensor)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+    print("\nEpoch:", epoch)
+    print("Training loss:", loss.item())
 
 # Manual Test: Uncomment to run your own manual test
 
@@ -110,8 +107,8 @@ model.eval()
 with torch.no_grad():
     for text, mask in test_data:
         y_test = mask
-        x = [test_tok_to_ix[tok]
-             for tok in y_test.split() if tok in test_tok_to_ix]
+        x = [tok_to_ix[tok]
+             for tok in y_test.split() if tok in tok_to_ix]
         x_test = torch.LongTensor(x)
         pred_y_test = model(x_test)
         res, ind = torch.topk(pred_y_test, 5)
