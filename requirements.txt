@@ -1,9 +1,6 @@
 torch
 pandas
 numpy
-pytorch_transformers
-halo
 rich
 transformers
-string
 matplotlib
