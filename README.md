@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 #### Running the model
 
-The repo is initialized with data to train/test/evaluate the model on.
+The repo is initialized with data to train/test/validate the model on.
 If you would like to test/run on new data or edit the amount of lines being read, edit `preprocess.py`
 
 To run the GPT-2 single sentence autofill demo:
@@ -26,6 +26,7 @@ To run the GPT-2 test against our email dataset:
 ```
 python3 gpt2-test.py
 ```
+
 > Results are written to `gpt2_results.csv`
 
 To run and view our GPT-2 Charts:
