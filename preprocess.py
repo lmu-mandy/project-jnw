@@ -1,5 +1,5 @@
 import pandas as pd
-import pip._internal.resolution.resolvelib.resolver
+import itertools
 import string
 
 # Read in the email data (start at row 16 to avoid reading in headers)
