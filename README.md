@@ -28,7 +28,7 @@ python3 gpt2-test.py
 ```
 > Results are written to `gpt2_results.csv`
 
-To run our GPT-2 Charts:
+To run and view our GPT-2 Charts:
 
 ```
 python3 gpt2-charts.py
