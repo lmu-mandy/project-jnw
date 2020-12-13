@@ -34,8 +34,8 @@ def load_vocab(text):
             word_to_ix.setdefault(word, len(word_to_ix))
     return word_to_ix
 
-# Load data and split up built sentences and masks
 
+# Load training data and split up built sentences and masks
 
 df = pd.read_csv("data/train.csv", quotechar='`')
 train_data = []
@@ -47,6 +47,19 @@ for i, row in df.iterrows():
         if mask not in masks:
             masks.append(mask)
 tok_to_ix = load_vocab(train_data)
+
+# Load testing data and split up built sentences and masks
+
+df_test = pd.read_csv("data/test.csv", quotechar='`')
+test_data = []
+test_masks = []
+for i, row in df_test.iterrows():
+    if i != 0:
+        text, mask = row['text'], row['mask']
+        test_data.append((text, mask))
+        if mask not in test_masks:
+            test_masks.append(mask)
+test_tok_to_ix = load_vocab(test_data)
 
 # Initialize Model
 
@@ -76,34 +89,35 @@ loss_fn = nn.BCELoss()
 #     print("\nEpoch:", epoch)
 #     print("Training loss:", loss.item())
 
-# Manual Test
+# Manual Test: Uncomment to run your own manual test
 
-y_test = "I have the presentation to"
+# y_test = "I have the presentation to"
 
-with torch.no_grad():
-    model.eval()
-    x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
-    x_test = torch.LongTensor(x)
-    pred_y_test = model(x_test)
-    values, word_indices = pred_y_test.topk(3)
-    for i, word_index in enumerate(word_indices):
-        pred_word = masks[word_index]
-        print(values[i].item(), y_test, f"_{pred_word}_")
+# with torch.no_grad():
+#     model.eval()
+#     x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
+#     x_test = torch.LongTensor(x)
+#     pred_y_test = model(x_test)
+#     values, word_indices = pred_y_test.topk(3)
+#     for i, word_index in enumerate(word_indices):
+#         pred_word = masks[word_index]
+#         print(values[i].item(), y_test, f"_{pred_word}_")
 
 
 # Test Report
 prediction_score = {"Yes": 0, "No": 0}
 model.eval()
 with torch.no_grad():
-    for text, mask in train_data:
+    for text, mask in test_data:
         y_test = mask
-        x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
+        x = [test_tok_to_ix[tok]
+             for tok in y_test.split() if tok in test_tok_to_ix]
         x_test = torch.LongTensor(x)
         pred_y_test = model(x_test)
         res, ind = torch.topk(pred_y_test, 5)
         pred_words = set()
         for i in ind:
-            pred_words.add(masks[i])
+            pred_words.add(test_masks[i])
         if mask in pred_words:
             print("Correct Prediction:", pred_words, mask)
             prediction_score["Yes"] += 1
