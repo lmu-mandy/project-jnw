@@ -2,6 +2,9 @@ import pandas as pd
 import itertools
 import string
 
+# Program to preprocess (remove whitespace, headers, and all lines of text that only contain letters)
+# and then split up the preprocessed data into 3 separate csv files (train, test, evaluation)
+
 # Read in 10,000 lines of the email data (start at row 16 to avoid reading in headers)
 train_data = []
 df = pd.read_csv("emails.csv", nrows=10000, usecols=range(2))
