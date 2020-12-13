@@ -5,3 +5,6 @@ pytorch_transformers
 halo
 rich
 transformers
+itertools
+string
+matplotlib
