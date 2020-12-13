@@ -1,6 +1,6 @@
-[Enron Email Dataset](https://www.kaggle.com/wcukierski/enron-email-dataset)
-
 #### Building a model (FFNN) and testing a pre trained model (GPT-2) on next word prediction.
+
+#### Testing with the [Enron Email Dataset](https://www.kaggle.com/wcukierski/enron-email-dataset)
 
 #### Install Requirements
 
