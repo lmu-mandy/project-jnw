@@ -76,7 +76,7 @@ for epoch in range(n_epochs):
     print("\nEpoch:", epoch)
     print("Training loss:", loss.item())
 
-Manual Test
+# Manual Test
 
 y_test = "I have the presentation to"
 
