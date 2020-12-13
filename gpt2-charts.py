@@ -2,6 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 data = pd.read_csv("gpt2_results.csv")
+plt.style.use('fivethirtyeight')
+
+# Accuracy over time
 
 plt.plot(data['accuracy'])
 plt.ylabel('Accuracy')
