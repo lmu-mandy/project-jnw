@@ -26,6 +26,13 @@ To run the GPT-2 test against our email dataset:
 ```
 python3 gpt2-test.py
 ```
+> Results are written to `gpt2_results.csv`
+
+To run our GPT-2 Charts:
+
+```
+python3 gpt2-charts.py
+```
 
 To run the Feed-Forward NN test against our email dataset:
 
