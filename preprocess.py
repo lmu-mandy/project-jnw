@@ -2,7 +2,7 @@ import pandas as pd
 import itertools
 import string
 
-# Read in the email data (start at row 16 to avoid reading in headers)
+# Read in 10,000 lines of the email data (start at row 16 to avoid reading in headers)
 train_data = []
 df = pd.read_csv("emails.csv", nrows=10000, usecols=range(2))
 for index, row in df.iterrows():
@@ -32,10 +32,12 @@ test.write('mask,'+'text'+'\n')
 val = open("data/val.csv", "w")
 val.write('mask,'+'text'+'\n')
 
+# to limit the data we add to the csv files, only read the first 5000 lines
 for idx, value in enumerate(updated_train_data[:5000]):
   split_sent = updated_train_data[idx].split(' ')
-  # mask the last word in the sentence fragment
+  # mask the last word in the sentence
   output = [' '.join(split_sent[:2])]
+  # build up the rest of the sentence fragment
   for word in split_sent[2:]:
     output.append(output[-1] + ' ' + word)
   for o in output:
