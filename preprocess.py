@@ -18,12 +18,10 @@ train_data[:] = [[elem for elem in x if elem.strip()] and [elem.strip() for elem
 # convert train_data from list of lists to a list of strings
 train_data = list(itertools.chain.from_iterable(train_data))
 
-# create a new list that will hold all of the data that we want (text only)
+# if string only contains letters and is longer than 4 words, append to new list
 updated_train_data = []
-
 for idx, value in enumerate(train_data):
   x = train_data[idx]
-  # if string only contains letters and is longer than 4 words, append to new list
   if x.replace(' ','').isalpha() and len(x) >= 4:
     updated_train_data.append(x)
 
@@ -36,21 +34,17 @@ val = open("data/val.csv", "w")
 val.write('mask,'+'text'+'\n')
 
 # to limit the data we add to the csv files, only read the first 5000 lines
+# format the sentence to mask the last word
+# start at length 2 and build up until you reach the full length
 for idx, value in enumerate(updated_train_data[:5000]):
   split_sent = updated_train_data[idx].split(' ')
-  # mask the last word in the sentence
   output = [' '.join(split_sent[:2])]
-  # build up the rest of the sentence fragment
   for word in split_sent[2:]:
     output.append(output[-1] + ' ' + word)
   for o in output:
     s = o.split(' ')
-    # take the last word in the sentence fragment and mask it
     last_word = s[-1].translate(str.maketrans('', '', string.punctuation))
-    # takes the sentence fragment without the last word
     new_sent = ' '.join(' '.join(s[:len(s) - 1]).split())
-    # split the sentences into 3 different csv files
-    # only add them if both the last word and the new sentence fragment aren't empty strings
     if last_word != '' and new_sent != '':
       if idx <= 1670:
         train.write(last_word + ',`' + new_sent + '`\n')
