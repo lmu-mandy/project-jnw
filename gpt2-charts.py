@@ -8,7 +8,8 @@ plt.style.use('fivethirtyeight')
 
 plt.plot(data['accuracy'])
 plt.ylabel('Accuracy')
-plt.xlabel('Tests')
+plt.xlabel('Lines Processed')
+plt.title('GPT-2: Accuracy Over Time')
 plt.show()
 
 # Input word count stacked barchart
@@ -28,11 +29,12 @@ width = 0.35
 
 fig, ax = plt.subplots()
 
-ax.bar(labels, valid_counts, width, label='Valid')
-ax.bar(labels, invalid_counts, width, bottom=valid_counts,  label='Invalid')  
+ax.bar(labels, valid_counts, width, label='Valid Prediction')
+ax.bar(labels, invalid_counts, width, bottom=valid_counts,  label='Invalid Prediction')  
 
-ax.set_ylabel('Number of Tests')
-ax.set_title('SET ME')
+ax.set_ylabel('Lines Processed')
+ax.set_xlabel('Number of Input Words')
+ax.set_title('GPT-2: Accuracies of Each Input Word Count')
 ax.legend()
 
 plt.show()
