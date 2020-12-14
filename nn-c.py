@@ -45,14 +45,14 @@ def load_vocab_masks(text):
 word_to_ix, mask_to_ix, ix_to_mask = load_vocab_masks(train_data)
 
 # Initialize Model
-emb_dim = 8
+emb_dim = 100
 learning_rate = 0.01
 model = Net(len(word_to_ix), emb_dim, len(mask_to_ix))
 optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 loss_fn = nn.BCELoss()
 
 # Training
-n_epochs = 5
+n_epochs = 10
 for epoch in range(n_epochs):
     model.train()
     for mask, text in zip(train_data['mask'], train_data['text']):
@@ -91,6 +91,6 @@ def evaluate(model, masks, texts):
     print(f"Accuracy (k={top_k}): {valid/total}")
 
 
-print("\nReport(NN): Test Data\n")
+print("\Evaluate (NN): Test Data\n")
 evaluate(model, test_data['mask'], test_data['text'])
 
