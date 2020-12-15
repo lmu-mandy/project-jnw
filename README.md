@@ -10,10 +10,11 @@
 pip install -r requirements.txt
 ```
 
-#### Running the model
+#### Processing the data
 
-The repo is initialized with data to train/test/validate the model on.
-If you would like to test/run on new data or edit the amount of lines being read, edit `preprocess.py`
+The `data` directory includes post-proccessed data as `train`, `test` and `val` csv files. If you would like to test/run on new data or edit the amount of lines being read, edit and run `preprocess.py`
+
+#### Running the models
 
 To run the GPT-2 single sentence autofill demo:
 
