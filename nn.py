@@ -11,8 +11,13 @@ import pandas as pd
 import numpy as np
 import re
 
-# Feed-Forward Network class constructor
+TRAIN_DATA_SOURCE = "./data/train.csv"
+TEST_DATA_SOURCE = "./data/test.csv"
 
+train_data = pd.read_csv(TRAIN_DATA_SOURCE, quotechar='`')
+test_data = pd.read_csv(TEST_DATA_SOURCE, quotechar='`')
+
+# Feed-Forward Network class constructor
 
 class Net(nn.Module):
     def __init__(self, num_words, emb_dim, num_y):
@@ -26,92 +31,65 @@ class Net(nn.Module):
         return self.sigmoid(self.linear(embeds))
 
 
-# Load data
-def load_vocab(text):
+def load_vocab_masks(text):
     word_to_ix = {}
-    for sent, _mask in text:
-        for word in sent.split():
-            word_to_ix.setdefault(word, len(word_to_ix))
-    return word_to_ix
+    mask_to_ix = {}
+    ix_to_mask = {}
+    for mask, text in zip(train_data['mask'], train_data['text']):
+        for word in text.split(' '):
+          word_to_ix.setdefault(word, len(word_to_ix))
+        mask_to_ix.setdefault(mask, len(mask_to_ix))
+        ix_to_mask[mask_to_ix[mask]] = mask
+    return word_to_ix, mask_to_ix, ix_to_mask
 
-# Load data and split up built sentences and masks
-
-
-df = pd.read_csv("data/train.csv", quotechar='`')
-train_data = []
-masks = []
-for i, row in df.iterrows():
-    if i != 0:
-        text, mask = row['text'], row['mask']
-        train_data.append((text, mask))
-        if mask not in masks:
-            masks.append(mask)
-tok_to_ix = load_vocab(train_data)
+word_to_ix, mask_to_ix, ix_to_mask = load_vocab_masks(train_data)
 
 # Initialize Model
-
-emb_dim = 8
-num_classes = len(masks)
+emb_dim = 100
 learning_rate = 0.01
-model = Net(len(tok_to_ix), emb_dim, num_classes)
+model = Net(len(word_to_ix), emb_dim, len(mask_to_ix))
 optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 loss_fn = nn.BCELoss()
 
-# Train model on training data
+# Training
+n_epochs = 10
+for epoch in range(n_epochs):
+    model.train()
+    for mask, text in zip(train_data['mask'], train_data['text']):
+        x = [word_to_ix[word] for word in text.split()]
+        x_train_tensor = torch.LongTensor(x)
+        x_train_tensor = torch.LongTensor(x)
+        y_train_tensor = np.zeros(len(mask_to_ix.keys()))
+        y_train_tensor[mask_to_ix[mask]] = 1
+        y_train_tensor = torch.Tensor(y_train_tensor)
+        pred_y = model(x_train_tensor)
+        loss = loss_fn(pred_y, y_train_tensor)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+    print("\nEpoch:", epoch)
+    print("Training loss:", loss.item())
 
-# n_epochs = 3
-# for epoch in range(n_epochs):
-#     model.train()
-#     for text, mask in train_data:
-#         x = [tok_to_ix[tok] for tok in text.split()]
-#         x_train_tensor = torch.LongTensor(x)
-#         y_train_tensor = np.zeros(len(masks))
-#         y_train_tensor[masks.index(mask)] = 1
-#         y_train_tensor = torch.Tensor(y_train_tensor)
-#         pred_y = model(x_train_tensor)
-#         loss = loss_fn(pred_y, y_train_tensor)
-#         loss.backward()
-#         optimizer.step()
-#         optimizer.zero_grad()
-#     print("\nEpoch:", epoch)
-#     print("Training loss:", loss.item())
-
-# Manual Test
-
-y_test = "I have the presentation to"
-
-with torch.no_grad():
-    model.eval()
-    x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
-    x_test = torch.LongTensor(x)
-    pred_y_test = model(x_test)
-    values, word_indices = pred_y_test.topk(3)
-    for i, word_index in enumerate(word_indices):
-        pred_word = masks[word_index]
-        print(values[i].item(), y_test, f"_{pred_word}_")
-
-
-# Test Report
-prediction_score = {"Yes": 0, "No": 0}
-model.eval()
-with torch.no_grad():
-    for text, mask in train_data:
+def evaluate(model, masks, texts):
+    valid = 0
+    total = 0
+    top_k = 5
+    for mask, text in zip(masks, texts):
         y_test = mask
-        x = [tok_to_ix[tok] for tok in y_test.split() if tok in tok_to_ix]
-        x_test = torch.LongTensor(x)
-        pred_y_test = model(x_test)
-        res, ind = torch.topk(pred_y_test, 5)
-        pred_words = set()
-        for i in ind:
-            pred_words.add(masks[i])
-        if mask in pred_words:
-            print("Correct Prediction:", pred_words, mask)
-            prediction_score["Yes"] += 1
-        else:
-            print("Incorrect Prediction:", pred_words, mask)
-            prediction_score["No"] += 1
-    accuracy = prediction_score["Yes"] / \
-        (prediction_score["Yes"] + prediction_score["No"])
-    print("Correct Predictions (Topk | k=5):", prediction_score["Yes"])
-    print("Incorrect Predictions (Topk | k=5):", prediction_score["No"])
-    print("Accuracy:", accuracy)
+        with torch.no_grad():
+            model.eval()
+            x = [word_to_ix[word] for word in y_test.split() if word in word_to_ix]
+            x_test = torch.LongTensor(x)
+            pred_y_test = model(x_test)
+            values, mask_indices = pred_y_test.topk(top_k)
+            for i, mask_index in enumerate(mask_indices):
+                pred_word = ix_to_mask[mask_index.item()]
+                if mask == pred_word:
+                  valid += 1
+                  break
+            total +=  1
+    print(f"Accuracy (k={top_k}): {valid/total}")
+
+
+print("\Evaluate (NN): Test Data\n")
+evaluate(model, test_data['mask'], test_data['text'])
