@@ -1,3 +1,7 @@
+'''
+GPT-2 language model used to complete a sentence given input words from a user.
+'''
+
 import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 from rich.console import Console

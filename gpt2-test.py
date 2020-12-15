@@ -1,3 +1,8 @@
+'''
+GPT-2 language model tested on post-proccessed Enron dataset.
+Results are written to gpt2_results.csv file.
+'''
+
 import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import pandas as pd
