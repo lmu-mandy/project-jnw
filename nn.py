@@ -31,7 +31,12 @@ class Net(nn.Module):
         embeds = torch.mean(self.emb(text), dim=0)
         return self.sigmoid(self.linear(embeds))
 
-# Loading data and splitting up words and masked words
+
+'''
+Loading data and splitting up words and masked words
+@params
+text: pandas dataframe of sentences and masked word
+'''
 
 
 def load_vocab_masks(text):
